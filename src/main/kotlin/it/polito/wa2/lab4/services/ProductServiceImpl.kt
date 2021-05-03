@@ -6,10 +6,9 @@ import it.polito.wa2.lab4.dto.toProductDTO
 import it.polito.wa2.lab4.exceptions.NotFoundException
 import it.polito.wa2.lab4.exceptions.ProductQuantityUnavailableException
 import it.polito.wa2.lab4.repositories.ProductRepository
-import org.springframework.data.crossstore.ChangeSetPersister
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
-import java.lang.Math.abs
 import java.math.BigDecimal
 
 @Service
@@ -29,7 +28,7 @@ class ProductServiceImpl(private val productRepository: ProductRepository): Prod
 
     override suspend fun updateProductQuantity(productId: Long, quantity: Long): ProductDTO {
         val product = productRepository.findById(productId)
-            ?: throw NotFoundException("Inserted productId not found on DB")
+            ?: throw NotFoundException("Requested productId not found on DB")
 
         if( quantity < 0 && product.quantity < -quantity )
             throw ProductQuantityUnavailableException("Required quantity is not available")
@@ -43,5 +42,22 @@ class ProductServiceImpl(private val productRepository: ProductRepository): Prod
         return productRepository.save(newProduct).toProductDTO()
     }
 
+    override suspend fun getProduct(productId: Long): ProductDTO {
+        val product = productRepository.findById(productId)
+            ?: throw NotFoundException("Requested productId not found on DB")
+
+        return product.toProductDTO()
+    }
+
+    override fun getProducts(): Flow<ProductDTO> {
+
+        return productRepository.findAll()
+            .map { it.toProductDTO() }
+    }
+
+    override fun getProductsByCategory(category: String): Flow<ProductDTO> {
+        return productRepository.findByCategory(category)
+            .map { it.toProductDTO() }
+    }
 
 }
