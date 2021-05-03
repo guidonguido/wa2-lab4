@@ -30,7 +30,7 @@ class Lab4Application {
 
 }
 
-suspend fun main(args: Array<String>) {
+fun main(args: Array<String>) {
     val context = runApplication<Lab4Application>(*args)
 
     /* val productRepository = context.getBean("productRepository") as ProductRepository
