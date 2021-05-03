@@ -5,14 +5,10 @@ import it.polito.wa2.lab4.services.ProductService
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import org.springframework.http.HttpStatus
-import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
-import org.springframework.web.reactive.function.server.ServerResponse
-import reactor.core.publisher.Mono
-import reactor.kotlin.core.publisher.toMono
-import java.lang.RuntimeException
+import javax.validation.Valid
 import javax.validation.constraints.NotNull
 import javax.validation.constraints.Positive
 
@@ -24,7 +20,7 @@ class ProductController(val productService: ProductService) {
     @PostMapping("/products")
     suspend fun addProduct(
             @RequestBody
-            // @Valid
+            @Valid
             bodyDTO: ProductDTO): ResponseEntity<ProductDTO> {
 
         val newProduct = productService.addProduct(bodyDTO.name,
