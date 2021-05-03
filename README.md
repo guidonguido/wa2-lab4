@@ -1,13 +1,13 @@
-#Group 04 (AG Team) - Lab 4
+# Group 04 (AG Team) - Lab 4
 
 ### Labs implemented:
 
--[x] Lab 2
--[x] Lab 3
--[ ] Lab 4
--[ ] Lab 5
--[ ] Lab 6
--[ ] Lab 7
+- [x] Lab 2
+- [x] Lab 3
+- [x] Lab 4
+- [ ] Lab 5
+- [ ] Lab 6
+- [ ] Lab 7
 
 ### Members
 
