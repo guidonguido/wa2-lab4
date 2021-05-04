@@ -83,7 +83,7 @@ class ProductController(val productService: ProductService) {
                                       @NotNull(message = "'category' string is required")
                                       category: String? = null,): ResponseEntity<Flow<ProductDTO>> {
         val products =  productService.getProductsByCategory(category!!)
-                                      .onEach { delay(2000) }
+                                      // .onEach { delay(2000) }
 
         return ResponseEntity(products, HttpStatus.OK)
 
