@@ -2,6 +2,7 @@ package it.polito.wa2.lab4.controllers
 
 import it.polito.wa2.lab4.dto.ProductDTO
 import it.polito.wa2.lab4.services.ProductService
+import kotlinx.coroutines.flow.Flow
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
@@ -11,6 +12,7 @@ import org.springframework.web.reactive.function.server.ServerResponse
 import reactor.core.publisher.Mono
 import reactor.kotlin.core.publisher.toMono
 import java.lang.RuntimeException
+import javax.validation.Valid
 import javax.validation.constraints.NotNull
 import javax.validation.constraints.Positive
 
@@ -22,7 +24,7 @@ class ProductController(val productService: ProductService) {
     @PostMapping("/products")
     suspend fun addProduct(
             @RequestBody
-            // @Valid
+            @Valid
             bodyDTO: ProductDTO): ResponseEntity<ProductDTO> {
 
         val newProduct = productService.addProduct(bodyDTO.name,
@@ -51,7 +53,33 @@ class ProductController(val productService: ProductService) {
         }
     }
 
+    @GetMapping("/products/{productId}")
+    suspend fun getProduct(
+        @PathVariable
+        @Positive(message = "Insert a valid productId")
+        productId: Long): ResponseEntity<Any>{
+        return try{
+            val newProduct = productService.getProduct(productId)
+            ResponseEntity(newProduct, HttpStatus.OK)
+        } catch(e: Exception){
+            ResponseEntity(e.message, HttpStatus.BAD_REQUEST)
+        }
+    }
 
+    @GetMapping("/products")
+    suspend fun getAllProducts():ResponseEntity<Flow<ProductDTO>>{
+        val res = productService.getAllProducts()
+        return ResponseEntity(res,HttpStatus.OK)
+    }
+
+    @GetMapping("/productsByCategory")
+    suspend fun getAllProductsByCategory(
+        @RequestParam
+        @NotNull
+        category: String? = null):ResponseEntity<Flow<ProductDTO>>{
+        val res = productService.getAllProductsByCategory(category!!)
+        return ResponseEntity(res,HttpStatus.OK)
+    }
 
 
 }

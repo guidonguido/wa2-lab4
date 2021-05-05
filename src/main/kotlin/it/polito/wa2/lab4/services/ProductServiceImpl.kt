@@ -6,6 +6,8 @@ import it.polito.wa2.lab4.dto.toProductDTO
 import it.polito.wa2.lab4.exceptions.NotFoundException
 import it.polito.wa2.lab4.exceptions.ProductQuantityUnavailableException
 import it.polito.wa2.lab4.repositories.ProductRepository
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.onEach
 import org.springframework.data.crossstore.ChangeSetPersister
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -41,6 +43,19 @@ class ProductServiceImpl(private val productRepository: ProductRepository): Prod
         product.quantity + quantity)
 
         return productRepository.save(newProduct).toProductDTO()
+    }
+
+    override suspend fun getProduct(productId: Long): ProductDTO {
+        val product = productRepository.findById(productId) ?: throw NotFoundException("Product not present in the db")
+        return product.toProductDTO()
+    }
+
+    override suspend fun getAllProducts(): Flow<ProductDTO> {
+        return productRepository.findAll().onEach { it.toProductDTO() } as Flow<ProductDTO>
+    }
+
+    override     suspend fun getAllProductsByCategory(category: String): Flow<ProductDTO> {
+        return productRepository.findByCategory(category).onEach { it.toProductDTO() } as Flow<ProductDTO>
     }
 
 

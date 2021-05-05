@@ -40,9 +40,9 @@ class DBConfig: AbstractR2dbcConfiguration(){
                 option(ConnectionFactoryOptions.PROTOCOL, "mariadb")
                 option(ConnectionFactoryOptions.HOST, "localhost")
                 option(ConnectionFactoryOptions.PORT, 3306)
-                option(ConnectionFactoryOptions.USER, "guido")
-                option(ConnectionFactoryOptions.PASSWORD, "password")
-                option(ConnectionFactoryOptions.DATABASE, "LAB4")
+                option(ConnectionFactoryOptions.USER, "root")
+                option(ConnectionFactoryOptions.PASSWORD, "root")
+                option(ConnectionFactoryOptions.DATABASE, "lab4")
             }.build()
         )
     }
