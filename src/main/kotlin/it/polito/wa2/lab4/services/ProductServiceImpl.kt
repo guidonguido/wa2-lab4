@@ -9,12 +9,15 @@ import it.polito.wa2.lab4.repositories.ProductRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.onEmpty
 import kotlinx.coroutines.reactive.asFlow
 import kotlinx.coroutines.reactor.asFlux
 import org.springframework.data.crossstore.ChangeSetPersister
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import reactor.core.publisher.Mono
+import reactor.kotlin.core.publisher.toFlux
+import reactor.kotlin.core.publisher.toMono
 import java.lang.Math.abs
 import java.math.BigDecimal
 
@@ -52,9 +55,14 @@ class ProductServiceImpl(private val productRepository: ProductRepository): Prod
 
     override suspend fun getProduct(productId: Long): Mono<ProductDTO> {
 
-        return productRepository.findById(productId)
-            .doOnError {  throw NotFoundException("Inserted productId not found on DB") }
-            .map { it.toProductDTO() }
+        val product = productRepository.findById(productId)
+
+        return product
+                .hasElement()
+                .flatMap {
+                    if(it) product.map { it.toProductDTO() }
+                    else throw NotFoundException("Inserted productId not found on DB")
+            }
     }
 
     override suspend fun getAllProduct(): Flow<ProductDTO> {
@@ -64,7 +72,9 @@ class ProductServiceImpl(private val productRepository: ProductRepository): Prod
 
     override suspend fun getProductsByCategory(category: String): Flow<ProductDTO> {
 
-        return productRepository.findAllByCategory(category).map { it.toProductDTO() }
+        return productRepository.findAllByCategory(category)
+            .map { it.toProductDTO() }
+            .onEmpty { throw NotFoundException("Inserted category not found on DB") }
     }
 
 }
