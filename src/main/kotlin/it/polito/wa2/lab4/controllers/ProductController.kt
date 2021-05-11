@@ -2,6 +2,7 @@ package it.polito.wa2.lab4.controllers
 
 import it.polito.wa2.lab4.dto.ProductDTO
 import it.polito.wa2.lab4.services.ProductService
+import kotlinx.coroutines.flow.Flow
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
@@ -23,7 +24,7 @@ class ProductController(val productService: ProductService) {
     suspend fun addProduct(
             @RequestBody
             // @Valid
-            bodyDTO: ProductDTO): ResponseEntity<ProductDTO> {
+            bodyDTO: ProductDTO): ResponseEntity<Mono<ProductDTO>> {
 
         val newProduct = productService.addProduct(bodyDTO.name,
                                                    bodyDTO.category,
@@ -50,6 +51,36 @@ class ProductController(val productService: ProductService) {
             ResponseEntity(e.message, HttpStatus.BAD_REQUEST)
         }
     }
+
+    @GetMapping("/products/{productId}")
+    suspend fun getProduct(@PathVariable
+                           @Positive(message = "Insert a valid productId")
+                           productId: Long
+    ): ResponseEntity<Mono<ProductDTO>> {
+
+        val returnPrd = productService.getProduct(productId)
+
+        return ResponseEntity<Mono<ProductDTO>>(returnPrd, HttpStatus.OK)
+    }
+
+    @GetMapping("/products")
+    suspend fun getAllProducts(): ResponseEntity<Flow<ProductDTO>> {
+
+        return ResponseEntity<Flow<ProductDTO>>(
+                                                productService.getAllProduct(),
+                                                HttpStatus.OK
+        )
+    }
+
+    @GetMapping("/productsByCategory")
+    suspend fun getproductsByCategory(@RequestParam(name = "category", required = true)
+                                      @NotNull(message = "A category is required")
+                                      category: String? = null
+    ): ResponseEntity<Flow<ProductDTO>> {
+
+        return ResponseEntity<Flow<ProductDTO>>(productService.getProductsByCategory(category!!) ,HttpStatus.OK)
+    }
+
 
 
 
