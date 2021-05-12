@@ -25,9 +25,9 @@ class DBConfig: AbstractR2dbcConfiguration(){
             .builder()
             .host("localhost")
             .port(3306)
-            .username("guido")
-            .password("password")
-            .database("webFluxDemo")
+            .username("andrea")
+            .password("andrea")
+            .database("LAB4")
             .build()
         return MariadbConnectionFactory(conf) */
 
@@ -40,8 +40,8 @@ class DBConfig: AbstractR2dbcConfiguration(){
                 option(ConnectionFactoryOptions.PROTOCOL, "mariadb")
                 option(ConnectionFactoryOptions.HOST, "localhost")
                 option(ConnectionFactoryOptions.PORT, 3306)
-                option(ConnectionFactoryOptions.USER, "guido")
-                option(ConnectionFactoryOptions.PASSWORD, "password")
+                option(ConnectionFactoryOptions.USER, "andrea")
+                option(ConnectionFactoryOptions.PASSWORD, "andrea")
                 option(ConnectionFactoryOptions.DATABASE, "LAB4")
             }.build()
         )
