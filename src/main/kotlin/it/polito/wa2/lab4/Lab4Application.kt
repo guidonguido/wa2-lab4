@@ -2,6 +2,7 @@ package it.polito.wa2.lab4
 
 import it.polito.wa2.lab4.domain.Product
 import it.polito.wa2.lab4.repositories.ProductRepository
+import it.polito.wa2.lab4.services.ProductServiceImpl
 import org.springframework.boot.CommandLineRunner
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
@@ -31,10 +32,15 @@ class Lab4Application {
 suspend fun main(args: Array<String>) {
     val context = runApplication<Lab4Application>(*args)
 
-   /* val productRepository = context.getBean("productRepository") as ProductRepository
+    /*val productRepository = context.getBean("productRepository") as ProductRepository
+
+    val productService = context.getBean("productServiceImpl") as ProductServiceImpl
 
     val product = Product(null, "product1", "Food", BigDecimal(10), 1L)
 
     val savedProd = productRepository.save(product)
-    print("Saved product: {id: ${savedProd.id}}")*/
+    println("Saved product: {id: ${savedProd.id}}")
+
+    val updatedProduct = productService.updateProductQuantity(savedProd.id!!, 100)
+    println("Updated product: $updatedProduct")*/
 }

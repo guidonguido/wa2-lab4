@@ -6,6 +6,8 @@ import it.polito.wa2.lab4.dto.toProductDTO
 import it.polito.wa2.lab4.exceptions.NotFoundException
 import it.polito.wa2.lab4.exceptions.ProductQuantityUnavailableException
 import it.polito.wa2.lab4.repositories.ProductRepository
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
 
@@ -44,7 +46,7 @@ class ProductServiceImpl(private val productRepository: ProductRepository): Prod
 
         val prod = productRepository.save(newProduct)
 
-        //FIXME why this doesn't work?
+        //FIXME it doesn't update the quantity, why?
         /*productRepository.updateProductQuantity(productId, quantity)
 
         val prod = productRepository.findById(productId)
@@ -54,4 +56,18 @@ class ProductServiceImpl(private val productRepository: ProductRepository): Prod
         return prod.toProductDTO()
     }
 
+    override suspend fun getProductById(productId: Long): ProductDTO {
+        val product = productRepository.findById(productId)
+            ?: throw NotFoundException("Inserted productId not found on DB")
+
+        return product.toProductDTO()
+    }
+
+    override suspend fun getAllProducts(): Flow<ProductDTO> {
+        return productRepository.findAll().map { it.toProductDTO() }
+    }
+
+    override suspend fun getProductsByCategory(category: String): Flow<ProductDTO> {
+        return productRepository.findAllByCategory(category).map{ it.toProductDTO() }
+    }
 }

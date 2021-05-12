@@ -2,6 +2,9 @@ package it.polito.wa2.lab4.controllers
 
 import it.polito.wa2.lab4.dto.ProductDTO
 import it.polito.wa2.lab4.services.ProductService
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.onEach
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
@@ -51,7 +54,33 @@ class ProductController(val productService: ProductService) {
         }
     }
 
+    @GetMapping("/products/{productId}")
+    suspend fun getProductByProductId(
+        @PathVariable
+        @Positive(message = "Insert a valid productId")
+        productId: Long
+    ): ResponseEntity<Any> {
+        return try{
+            val product = productService.getProductById(productId)
+            ResponseEntity(product, HttpStatus.OK)
+        } catch(e: Exception){
+            ResponseEntity(e.message, HttpStatus.BAD_REQUEST)
+        }
+    }
 
+    @GetMapping("/products", produces = ["application/stream+json"])
+    suspend fun getAllProducts(): ResponseEntity<Flow<ProductDTO>> {
+        val products = productService.getAllProducts().onEach { delay(2000) }
+        return ResponseEntity(products, HttpStatus.OK)
+    }
 
-
+    @GetMapping("/productsByCategory", produces = ["application/stream+json"])
+    suspend fun getProductsByCategory(
+        @RequestParam
+        @NotNull(message = "Category is required")
+        category: String? = null,
+    ): ResponseEntity<Flow<ProductDTO>> {
+        val products = productService.getProductsByCategory(category!!).onEach { delay(2000) }
+        return ResponseEntity(products, HttpStatus.OK)
+    }
 }
