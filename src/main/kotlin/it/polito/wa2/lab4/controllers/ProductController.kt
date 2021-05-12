@@ -3,6 +3,7 @@ package it.polito.wa2.lab4.controllers
 import it.polito.wa2.lab4.dto.ProductDTO
 import it.polito.wa2.lab4.services.ProductService
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.reactive.asFlow
 import kotlinx.coroutines.reactive.awaitSingle
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
@@ -27,14 +28,19 @@ class ProductController(val productService: ProductService) {
     suspend fun addProduct(
             @RequestBody
             // @Valid
-            bodyDTO: ProductDTO): ResponseEntity<Mono<ProductDTO>> {
+            bodyDTO: ProductDTO): ResponseEntity<Any> {
 
-        val newProduct = productService.addProduct(bodyDTO.name,
-                                                   bodyDTO.category,
-                                                   bodyDTO.price,
-                                                   bodyDTO.quantity)
+        return try {
+            val newProduct = productService.addProduct(bodyDTO.name,
+                                                       bodyDTO.category,
+                                                       bodyDTO.price,
+                                                       bodyDTO.quantity
+            )
+            ResponseEntity(newProduct, HttpStatus.CREATED)
 
-        return ResponseEntity(newProduct, HttpStatus.CREATED)
+        } catch(e: Exception){
+            ResponseEntity(e.message, HttpStatus.BAD_REQUEST)
+        }
     }
 
     @PatchMapping("/products/{productId}")
@@ -42,15 +48,17 @@ class ProductController(val productService: ProductService) {
                                @Positive(message = "Insert a valid productId")
                                productId: Long,
 
-                               @RequestBody
+                               @RequestBody(required = true)
                                @NotNull(message = "Insert a valid quantity")
                                bodyVal: Long? = null
     ): ResponseEntity<Any> {
 
         return try{
+            //println("New quantity: ${bodyVal}")
             val newProduct = productService.updateProductQuantity(productId, bodyVal!!)
             ResponseEntity(newProduct, HttpStatus.OK)
         } catch(e: Exception){
+            //println("EXCEPTION")
             ResponseEntity(e.message, HttpStatus.BAD_REQUEST)
         }
     }
@@ -71,11 +79,14 @@ class ProductController(val productService: ProductService) {
     }
 
     @GetMapping("/products")
-    suspend fun getAllProducts(): ResponseEntity<Flow<ProductDTO>> {
+    suspend fun getAllProducts(): ResponseEntity<Flow<Any>> {
 
-        return ResponseEntity<Flow<ProductDTO>>(productService.getAllProduct(),
-                                                HttpStatus.OK
-        )
+        return try {
+            ResponseEntity<Flow<Any>>(productService.getAllProduct(), HttpStatus.OK
+            )
+        } catch(e: Exception){
+            ResponseEntity<Flow<Any>>(e.message.toMono().asFlow(), HttpStatus.BAD_REQUEST)
+        }
     }
 
     @GetMapping("/productsByCategory")
@@ -89,7 +100,6 @@ class ProductController(val productService: ProductService) {
                 throw RuntimeException("Insert a category name")
 
             val products = productService.getProductsByCategory(category)
-            TODO("Do not catch excptions from repo")
 
             ResponseEntity<Any>(products, HttpStatus.OK)
         }

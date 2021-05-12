@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onEmpty
 import kotlinx.coroutines.reactive.asFlow
+import kotlinx.coroutines.reactive.awaitSingleOrNull
 import kotlinx.coroutines.reactor.asFlux
 import org.springframework.data.crossstore.ChangeSetPersister
 import org.springframework.stereotype.Service
@@ -20,6 +21,7 @@ import reactor.kotlin.core.publisher.toFlux
 import reactor.kotlin.core.publisher.toMono
 import java.lang.Math.abs
 import java.math.BigDecimal
+import java.util.NoSuchElementException
 
 @Service
 class ProductServiceImpl(private val productRepository: ProductRepository): ProductService {
@@ -27,19 +29,20 @@ class ProductServiceImpl(private val productRepository: ProductRepository): Prod
     override suspend fun addProduct(name: String,
                                     category: String,
                                     price: BigDecimal,
-                                    quantity: Long): Mono<ProductDTO>{
+                                    quantity: Long
+    ): Mono<ProductDTO>{
         val product = Product(null, name, category, price, quantity)
 
-        val savedProd = productRepository.save(product)
+        val savedProd = productRepository.save(product).awaitSingleOrNull()
 
-        print("Saved product: {id: ${savedProd.map { it.id }}}")
+        print("Saved product: {id: ${savedProd.id }}")
 
-        return savedProd.map {  it.toProductDTO() }
+        return savedProd.toProductDTO().toMono()
     }
 
-    override suspend fun updateProductQuantity(productId: Long, quantity: Long): ProductDTO {
-        val product = productRepository.findById(productId).block()
-            ?: throw NotFoundException("Inserted productId not found on DB")
+    override suspend fun updateProductQuantity(productId: Long, quantity: Long): Mono<ProductDTO> {
+        //throw NoSuchElement exception
+        val product = productRepository.findById(productId).awaitSingleOrNull()
 
         if( quantity < 0 && product.quantity < -quantity )
             throw ProductQuantityUnavailableException("Required quantity is not available")
@@ -50,7 +53,7 @@ class ProductServiceImpl(private val productRepository: ProductRepository): Prod
             product.price,
         product.quantity + quantity)
 
-        return productRepository.save(newProduct).block()!!.toProductDTO()
+        return productRepository.save(newProduct).awaitSingleOrNull().toProductDTO().toMono()
     }
 
     override suspend fun getProduct(productId: Long): Mono<ProductDTO> {
@@ -68,6 +71,7 @@ class ProductServiceImpl(private val productRepository: ProductRepository): Prod
     override suspend fun getAllProduct(): Flow<ProductDTO> {
 
         return productRepository.findAll().map { it.toProductDTO() }.asFlow()
+                .onEmpty { throw NoSuchElementException("NO such product found on DB") }
     }
 
     override suspend fun getProductsByCategory(category: String): Flow<ProductDTO> {
