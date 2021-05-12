@@ -6,9 +6,7 @@ import it.polito.wa2.lab4.dto.toProductDTO
 import it.polito.wa2.lab4.exceptions.NotFoundException
 import it.polito.wa2.lab4.exceptions.ProductQuantityUnavailableException
 import it.polito.wa2.lab4.repositories.ProductRepository
-import org.springframework.data.crossstore.ChangeSetPersister
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
 import java.math.BigDecimal
 
 @Service
