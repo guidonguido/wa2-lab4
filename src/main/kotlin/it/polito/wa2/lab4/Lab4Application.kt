@@ -25,20 +25,16 @@ class Lab4Application {
             }
         }
     }
-
-     */
-
+    */
 }
 
 suspend fun main(args: Array<String>) {
     val context = runApplication<Lab4Application>(*args)
 
-    /* val productRepository = context.getBean("productRepository") as ProductRepository
+   /* val productRepository = context.getBean("productRepository") as ProductRepository
 
-    val product = Product(
-        null, "product1", category = "Food", BigDecimal(10), 1L)
+    val product = Product(null, "product1", "Food", BigDecimal(10), 1L)
 
     val savedProd = productRepository.save(product)
-    print("Saved product: {id: ${savedProd.id}}")
-     */
+    print("Saved product: {id: ${savedProd.id}}")*/
 }

@@ -9,16 +9,17 @@ import it.polito.wa2.lab4.repositories.ProductRepository
 import org.springframework.data.crossstore.ChangeSetPersister
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import java.lang.Math.abs
 import java.math.BigDecimal
 
 @Service
 class ProductServiceImpl(private val productRepository: ProductRepository): ProductService {
 
-    override suspend fun addProduct(name: String,
-                                    category: String,
-                                    price: BigDecimal,
-                                    quantity: Long): ProductDTO{
+    override suspend fun addProduct(
+        name: String,
+        category: String,
+        price: BigDecimal,
+        quantity: Long
+    ): ProductDTO{
         val product = Product(null, name, category, price, quantity)
 
         val savedProd = productRepository.save(product)
@@ -31,17 +32,18 @@ class ProductServiceImpl(private val productRepository: ProductRepository): Prod
         val product = productRepository.findById(productId)
             ?: throw NotFoundException("Inserted productId not found on DB")
 
-        if( quantity < 0 && product.quantity < -quantity )
+        if( quantity < 0 && product.quantity < kotlin.math.abs(quantity))
             throw ProductQuantityUnavailableException("Required quantity is not available")
 
-        val newProduct = Product(product.id,
+        val newProduct = Product(
+            product.id,
             product.name,
             product.category,
             product.price,
-        product.quantity + quantity)
+            product.quantity + quantity
+        )
 
         return productRepository.save(newProduct).toProductDTO()
     }
-
 
 }
