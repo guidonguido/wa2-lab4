@@ -70,7 +70,8 @@ class ProductController(val productService: ProductService) {
 
     @GetMapping("/products", produces = ["application/stream+json"])
     suspend fun getAllProducts(): ResponseEntity<Flow<ProductDTO>> {
-        val products = productService.getAllProducts().onEach { delay(2000) }
+        val products = productService.getAllProducts()
+            //.onEach { delay(2000) }
         return ResponseEntity(products, HttpStatus.OK)
     }
 
@@ -80,7 +81,8 @@ class ProductController(val productService: ProductService) {
         @NotNull(message = "Category is required")
         category: String? = null,
     ): ResponseEntity<Flow<ProductDTO>> {
-        val products = productService.getProductsByCategory(category!!).onEach { delay(2000) }
+        val products = productService.getProductsByCategory(category!!)
+            //.onEach { delay(2000) }
         return ResponseEntity(products, HttpStatus.OK)
     }
 }
