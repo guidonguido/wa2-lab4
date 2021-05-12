@@ -33,6 +33,7 @@ class ProductServiceImpl(private val productRepository: ProductRepository): Prod
         if( quantity < 0 && product.quantity < kotlin.math.abs(quantity))
             throw ProductQuantityUnavailableException("Required quantity is not available")
 
+        //TODO which way is better?
         val newProduct = Product(
             product.id,
             product.name,
@@ -41,7 +42,16 @@ class ProductServiceImpl(private val productRepository: ProductRepository): Prod
             product.quantity + quantity
         )
 
-        return productRepository.save(newProduct).toProductDTO()
+        val prod = productRepository.save(newProduct)
+
+        //FIXME why this doesn't work?
+        /*productRepository.updateProductQuantity(productId, quantity)
+
+        val prod = productRepository.findById(productId)
+
+        println("Prod $prod")*/
+
+        return prod.toProductDTO()
     }
 
 }
