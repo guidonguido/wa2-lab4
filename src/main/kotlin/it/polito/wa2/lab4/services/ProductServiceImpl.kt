@@ -23,7 +23,7 @@ class ProductServiceImpl(private val productRepository: ProductRepository): Prod
         val product = Product(null, name, category, price, quantity)
 
         val savedProd = productRepository.save(product)
-        print("Saved product: {id: ${savedProd.id}}")
+        println("Saved product: {id: ${savedProd.id}}")
 
         return savedProd.toProductDTO()
     }
