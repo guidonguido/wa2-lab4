@@ -9,15 +9,19 @@ import it.polito.wa2.lab4.repositories.ProductRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
+import reactor.core.publisher.Mono
+import reactor.kotlin.core.publisher.toMono
 import java.math.BigDecimal
 
 @Service
+@Transactional
 class ProductServiceImpl(private val productRepository: ProductRepository): ProductService {
 
     override suspend fun addProduct(name: String,
                                     category: String,
                                     price: BigDecimal,
-                                    quantity: Long): ProductDTO{
+                                    quantity: Long): ProductDTO {
         val product = Product(null, name, category, price, quantity)
 
         val savedProd = productRepository.save(product)

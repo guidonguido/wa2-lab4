@@ -52,7 +52,6 @@ class ProductController(val productService: ProductService) {
     @GetMapping("/products/{productId}")
     suspend fun getProduct(
         @PathVariable
-        @Positive(message = "Insert a valid productId")
         productId: Long
     ): ResponseEntity<Any> {
         return try{
