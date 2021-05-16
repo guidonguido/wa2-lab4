@@ -2,7 +2,6 @@ package it.polito.wa2.lab4.controllers
 
 import it.polito.wa2.lab4.dto.ProductDTO
 import it.polito.wa2.lab4.services.ProductService
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -95,11 +94,4 @@ class ProductController(val productService: ProductService) {
      * >> GET /warehouse/products HTTP/1.1
           Connection:Close
      */
-
-
-
-
-
-
-
 }

@@ -2,7 +2,6 @@ package it.polito.wa2.lab4.services
 
 import it.polito.wa2.lab4.dto.ProductDTO
 import kotlinx.coroutines.flow.Flow
-import reactor.core.publisher.Mono
 import java.math.BigDecimal
 
 interface ProductService {

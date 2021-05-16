@@ -19,21 +19,6 @@ class DBConfig: AbstractR2dbcConfiguration(){
 
     @Bean
     override fun connectionFactory(): ConnectionFactory {
-        // Posso configurare un ConnectionFactory per il mio DB, specifico
-        // In questo modo ad ogni operazione sul DB >> Sarà creata una nuova connessione <<
-        /* val conf = MariadbConnectionConfiguration
-            .builder()
-            .host("localhost")
-            .port(3306)
-            .username("guido")
-            .password("password")
-            .database("webFluxDemo")
-            .build()
-        return MariadbConnectionFactory(conf) */
-
-        // Oppure posso fare una configurazione generica, con >> Pooled driver <<
-        // Le connessioni al db saranno chieste al Connection Pool limitando le connessioni istanziabili a quelle
-        // fornite dal pool
         return ConnectionFactories.get(
             ConnectionFactoryOptions.builder().apply {
                 option(ConnectionFactoryOptions.DRIVER, "pool")
@@ -47,8 +32,6 @@ class DBConfig: AbstractR2dbcConfiguration(){
         )
     }
 
-    // Necessario all'inizializzazione dello schema nel DB,
-    // non essendo mappata automaticamente del codice come con JPA
     @Bean
     fun initializer(connectionFactory: ConnectionFactory): ConnectionFactoryInitializer {
         val cfi = ConnectionFactoryInitializer()
@@ -61,10 +44,4 @@ class DBConfig: AbstractR2dbcConfiguration(){
 
         return cfi
     }
-
-
-    /* override fun getCustomConverters(): MutableList<Any> =
-        mutableListOf(ProducerReader(), ProducerWriter())
-
-     */
 }
