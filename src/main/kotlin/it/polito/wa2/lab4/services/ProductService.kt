@@ -11,7 +11,7 @@ interface ProductService {
 
     suspend fun getProductById(productId: Long): ProductDTO
 
-    suspend fun getAllProducts(): Flow<ProductDTO>
+    fun getAllProducts(): Flow<ProductDTO>
 
-    suspend fun getProductsByCategory(category: String): Flow<ProductDTO>
+    fun getProductsByCategory(category: String): Flow<ProductDTO>
 }

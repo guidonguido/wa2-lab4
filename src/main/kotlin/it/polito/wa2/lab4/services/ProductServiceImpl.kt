@@ -63,11 +63,11 @@ class ProductServiceImpl(private val productRepository: ProductRepository): Prod
         return product.toProductDTO()
     }
 
-    override suspend fun getAllProducts(): Flow<ProductDTO> {
+    override fun getAllProducts(): Flow<ProductDTO> {
         return productRepository.findAll().map { it.toProductDTO() }
     }
 
-    override suspend fun getProductsByCategory(category: String): Flow<ProductDTO> {
+    override fun getProductsByCategory(category: String): Flow<ProductDTO> {
         return productRepository.findAllByCategory(category).map{ it.toProductDTO() }
     }
 }
